@@ -44,23 +44,22 @@ class OscilloscopeController extends Controller
     {
         Storage::put('last-load.txt', now()->format('Y-m-d H:i:s'));
         $inputData = $request->input('d');
-logger()->info(strlen($inputData));
-logger()->info($inputData);
         $data = [];
-        $recordLen = 40;
+//        $recordLen = 40;
+        $recordLen = 12;
         $recordsCount = intdiv(strlen($inputData), $recordLen);
         for ($i = 0; $i < $recordsCount; $i++) {
             $recordStr = substr($inputData, $i * $recordLen, $recordLen);
             $data[$i] = [];
             $data[$i]['time'] = hexdec(substr($recordStr, 0, 8));
             $data[$i]['p1'] = hexdec(substr($recordStr, 8, 4));
-            $data[$i]['p2'] = hexdec(substr($recordStr, 12, 4));
-            $data[$i]['p3'] = hexdec(substr($recordStr, 16, 4));
-            $data[$i]['p4'] = hexdec(substr($recordStr, 20, 4));
-            $data[$i]['p5'] = hexdec(substr($recordStr, 24, 4));
-            $data[$i]['p6'] = hexdec(substr($recordStr, 28, 4));
-            $data[$i]['p7'] = hexdec(substr($recordStr, 32, 4));
-            $data[$i]['p8'] = hexdec(substr($recordStr, 36, 4));
+//            $data[$i]['p2'] = hexdec(substr($recordStr, 12, 4));
+//            $data[$i]['p3'] = hexdec(substr($recordStr, 16, 4));
+//            $data[$i]['p4'] = hexdec(substr($recordStr, 20, 4));
+//            $data[$i]['p5'] = hexdec(substr($recordStr, 24, 4));
+//            $data[$i]['p6'] = hexdec(substr($recordStr, 28, 4));
+//            $data[$i]['p7'] = hexdec(substr($recordStr, 32, 4));
+//            $data[$i]['p8'] = hexdec(substr($recordStr, 36, 4));
         }
         Storage::put('data.txt', json_encode($data));
         return 'ok';
