@@ -14,10 +14,16 @@ class OscilloscopeController extends Controller
         $data = json_decode(Storage::get('data.txt') ?? '[]');
         $lastPing = now()->getTimestamp() - (new DateTime(Storage::get('last-ping.txt')))->getTimestamp();
         $lastLoad = now()->getTimestamp() - (new DateTime(Storage::get('last-load.txt')))->getTimestamp();
+
+        foreach ($data as $record) {
+            $record->p1 = 3300 * $record->p1 / 1024;
+        }
+
         return Inertia::render('Show', [
             'data' => $data,
             'lastPing' => $lastPing,
             'lastLoad' => $lastLoad,
+            'stepCount' => count($data),
         ]);
     }
 
@@ -38,28 +44,32 @@ class OscilloscopeController extends Controller
         $step = $request->input('step');
         $stepCount = $request->input('stepCount');
         Storage::put('load-params.txt', "$step;$stepCount");
+        Storage::put('data.txt', json_encode([]));
     }
 
     public function data(Request $request)
     {
         Storage::put('last-load.txt', now()->format('Y-m-d H:i:s'));
         $inputData = $request->input('d');
-        $data = [];
+        $data = json_decode(Storage::get('data.txt') ?? '[]');
 //        $recordLen = 40;
         $recordLen = 12;
         $recordsCount = intdiv(strlen($inputData), $recordLen);
         for ($i = 0; $i < $recordsCount; $i++) {
             $recordStr = substr($inputData, $i * $recordLen, $recordLen);
-            $data[$i] = [];
-            $data[$i]['time'] = hexdec(substr($recordStr, 0, 8));
-            $data[$i]['p1'] = hexdec(substr($recordStr, 8, 4));
-//            $data[$i]['p2'] = hexdec(substr($recordStr, 12, 4));
-//            $data[$i]['p3'] = hexdec(substr($recordStr, 16, 4));
-//            $data[$i]['p4'] = hexdec(substr($recordStr, 20, 4));
-//            $data[$i]['p5'] = hexdec(substr($recordStr, 24, 4));
-//            $data[$i]['p6'] = hexdec(substr($recordStr, 28, 4));
-//            $data[$i]['p7'] = hexdec(substr($recordStr, 32, 4));
-//            $data[$i]['p8'] = hexdec(substr($recordStr, 36, 4));
+            $record = [];
+
+            $record['time'] = hexdec(substr($recordStr, 0, 8));
+            $record['p1'] = hexdec(substr($recordStr, 8, 4));
+//            $record['p2'] = hexdec(substr($recordStr, 12, 4));
+//            $record['p3'] = hexdec(substr($recordStr, 16, 4));
+//            $record['p4'] = hexdec(substr($recordStr, 20, 4));
+//            $record['p5'] = hexdec(substr($recordStr, 24, 4));
+//            $record['p6'] = hexdec(substr($recordStr, 28, 4));
+//            $record['p7'] = hexdec(substr($recordStr, 32, 4));
+//            $record['p8'] = hexdec(substr($recordStr, 36, 4));
+
+            $data[] = $record;
         }
         Storage::put('data.txt', json_encode($data));
         return 'ok';

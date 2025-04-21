@@ -8,6 +8,7 @@ const props = defineProps([
   'data',
   'lastPing',
   'lastLoad',
+  'stepCount',
 ]);
 
 const data = ref(props.data);
@@ -23,7 +24,7 @@ const axis = ref({
     type: 'band'
   },
   secondary: {
-    domain: ['0', '1100'],
+    domain: ['0', '6000'],
     type: 'linear',
     ticks: 8
   }
@@ -66,6 +67,7 @@ const handleLoad = () => {
   <div class="page">
     <div>Last ping: {{ props.lastPing }} sec</div>
     <div>Last load: {{ props.lastLoad }} sec</div>
+    <div>Step count: {{ props.stepCount }}</div>
 
     <div>
       <MemoryCheckbox v-model="showP1" id="p1" label="p1"/>
